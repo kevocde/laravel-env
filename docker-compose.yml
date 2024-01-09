@@ -9,12 +9,14 @@ services:
       - /home/$USER/.gitconfig:/root/.gitconfig
       - /home/$USER/.git-credentials:/root/.git-credentials
       - ./env/php/config/php.ini:/usr/local/etc/php/conf.d/docker-fpm.ini
+      - ./env/npm/.npm:/.npm
       # Source code
       - ./source:/var/www/html
       # Shared folders
       - ./shared:/shared
     ports:
       - 9000:9000
+      - 5173:5173
   mysql:
     image: mysql:5.7
     user: 1000:1000
