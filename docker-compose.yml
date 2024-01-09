@@ -1,0 +1,44 @@
+services:
+  php:
+    build:
+      dockerfile: ./env/php/Dockerfile
+    user: 1000:1000
+    volumes:
+      # Configuration files
+      - /home/$USER/.ssh:/root/.ssh
+      - /home/$USER/.gitconfig:/root/.gitconfig
+      - /home/$USER/.git-credentials:/root/.git-credentials
+      - ./env/php/config/php.ini:/usr/local/etc/php/conf.d/docker-fpm.ini
+      # Source code
+      - ./source:/var/www/html
+      # Shared folders
+      - ./shared:/shared
+    ports:
+      - 9000:9000
+  mysql:
+    image: mysql:5.7
+    user: 1000:1000
+    volumes:
+      - ./env/mysql/data:/var/lib/mysql
+      # Shared folders
+      - ./shared:/shared
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASS}
+  nginx:
+    image: nginx
+    volumes:
+      # Configuration files
+      - ./env/nginx/conf.d:/etc/nginx/conf.d
+      - ./env/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./env/nginx/sites:/etc/nginx/sites
+      - ./env/nginx/certs:/etc/nginx/certs
+      - ./env/nginx/logs:/var/log/nginx
+      # Source code
+      - ./source:/var/www/html
+      # Shared folders
+      - ./shared:/shared
+    ports:
+      - 80:80
+      - 443:443
